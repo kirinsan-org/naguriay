@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<script src="scripts/jquery-2.1.0.min.js"></script>
+	<script src="scripts/uitool.js"></script>
+	<script src="/socket.io/socket.io.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
+	<script src="http://developers.its-mo.com/apps/key/cgi/loader.cgi?key=6caf2a40a7af09201be4d51e69d1ead0&ver=2.0&enc=EUC&force=1&api=zdcmap.js,control.js,shape.js,geo.js,imglayer.js,search.js,areamap.js,railwaymap.js,submap.js,usercontrol.js,userwidget.js&alert=0"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+    var map, from, to, msg_info,
+        lat = 35.6778614, lon = 139.7703167, imgdir ='../../image/search/';
+    var guyde_type = {
+        'start': {
+            custom: {
+                base: {
+                    src: imgdir + 'route_bg.png',
+                    imgSize: new ZDC.WH(35, 35),
+                    imgTL: new ZDC.TL(0, 0)
+                },
+                content: {
+                    src: imgdir + 'route_cat.png',
+                    imgSize: new ZDC.WH(35, 35),
+                    imgTL: new ZDC.TL(0, 0)
+                }
+            },
+            offset: ZDC.Pixel(0, -36)
+        },
+        'end': {
+            custom: {
+                base: {
+                    src: imgdir + 'route_bg.png',
+                    imgSize: new ZDC.WH(35, 35),
+                    imgTL: new ZDC.TL(38, 0)
+                },
+                content: {
+                    src: imgdir + 'route_cat.png',
+                    imgSize: new ZDC.WH(35, 35),
+                    imgTL: new ZDC.TL(35, 0)
+                }
+            },
+            offset: ZDC.Pixel(0, -36)
+        }
+    };
+
+    var line_property = {
+        '通常通路': {strokeColor: '#3000ff', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '横断歩道': {strokeColor: '#008E00', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '横断通路': {strokeColor: '#007777', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '歩道橋': {strokeColor: '#880000', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '踏切内通路': {strokeColor: '#008800', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '連絡通路': {strokeColor: '#000088', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '建物内通路': {strokeColor: '#880000', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '敷地内通路': {strokeColor: '#880000', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '乗換リンク': {strokeColor: '#880000', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'},
+        '通路外': {strokeColor: '#880000', strokeWeight: 5, lineOpacity: 0.5, lineStyle: 'solid'}
+    };
+
+    function loadMap(){
+        var ll  = new ZDC.LatLon(lat, lon);
+        map = new ZDC.Map(document.getElementById('map'),{
+            latlon: ll,
+            zoom: 7
+        });
+
+        msg_info = new ZDC.MsgInfo(ll, {offset: ZDC.Pixel(0, -18)});
+        map.addWidget(msg_info);
+    };
+
+    function exec(){
+
+        /* スタート地点の緯度経度 */
+        from = new ZDC.LatLon(35.685754722, 139.785605556);
+        /* ゴール地点の緯度経度 */
+        to   = new ZDC.LatLon(35.669612, 139.75245);
+
+
+        ZDC.Search.getRouteByWalk({
+            from: from,
+            to: to
+        },function(status, res) {
+            if (status.code == '000') {
+                /* 取得成功 */
+                writeRoute(status, res);
+            } else {
+                /* 取得失敗 */
+                alert(status.text);
+            }
+        });
+    };
+
+
+    function writeRoute(status, res) {
+
+        /* スタートとゴールのアイコンを地図に重畳します */
+        var start = new ZDC.Marker(from,guyde_type['start']);
+        var end   = new ZDC.Marker(to,guyde_type['end']);
+        /*
+           スタートとゴールのウィジットが他のマーカの
+           下にならないようにz-indexを設定します
+        */
+        start.setZindex(110);
+        end.setZindex(110);
+
+        map.addWidget(start);
+        map.addWidget(end);
+
+        var link = res.route.link;
+
+        var pl, latlons = [];
+        for (var i=0, j=link.length; i<j; i++) {
+
+            var opt = line_property[link[i].type];
+            var pllatlons = [];
+
+            for (var k=0, l=link[i].line.length; k<l; k++) {
+                pllatlons.push(link[i].line[k]);
+
+                latlons[i] = link[i].line[0];
+
+                if(i == j-1 && k == 1) {
+                    latlons[i+1] = link[i].line[1];
+                }
+            }
+            var pl = new ZDC.Polyline(pllatlons, opt);
+            map.addWidget(pl);
+
+            if (link[i].type != '通常通路') {
+                var guide = link[i].type;
+
+                var mk = new ZDC.Marker(link[i].line[0]);
+                map.addWidget(mk);
+
+                /* マーカをクリックしたときの動作 */
+                ZDC.bind(mk, ZDC.MARKER_CLICK, {link: link[i]}, markerClick);
+            }
+        }
+        /* 地点が全て表示できる縮尺レベルを取得 */
+        var adjust = map.getAdjustZoom(latlons);
+        map.moveLatLon(adjust.latlon);
+        map.setZoom(adjust.zoom);
+    };
+
+    function markerClick() {
+
+        var html = '<div style = "width:200px; height:50px;">';
+            html += '<table border="1" style="width:180px;">';
+            html += '<tr>';
+            html += '<td width="35%" style="font-size:10pt;">通路種別</td>';
+            html += '<td style="font-size:10pt;">' + this.link.structureType + '</td>';
+            html += '</tr>';
+            html += '<tr>';
+            html += '<td style="font-size:10pt;">構造種別</td>';
+            html += '<td style="font-size:10pt;">'+ this.link.type +'</td>';
+            html += '</tr></table></div>';
+
+        msg_info.setHtml(html);
+        msg_info.moveLatLon(new ZDC.LatLon(this.link.line[0].lat, this.link.line[0].lon));
+        msg_info.open();
+    };
+//]]>
+
+$(document).ready(function(){loadMap();exec();
+
+	$(".editOnAviary").bind({"click":function(event){
+		event.preventDefault();
+		launchEditor();return false;}
+})})
+</script>
+		
+	<link rel="stylesheet" href="style/commongui.css">
+	<link rel="stylesheet" href="images/systemicon/style.css">
+
+	<title></title>
+
+	<style>
+
+	</style>
+</head>
+<body>
+	
+<div id="metaldoor">
+	<div class="doorA"></div>
+	<div class="doorB"></div>
+</div>
+
+<section id="title"><!--待ち受け画面(サーバー機からのコマンドで次の画面に遷移)-->
+	<h1>今から先生は、お前達を殴る！</h1>
+
+	<a href="#" class="start"><span class="icon-play"></span></a>
+	
+</section>
+
+<section id="takephoto"><!--写真撮影-->
+	<h1>ファイティングポーズを取れ！！！</h1>
+
+
+<div id="photobooth">
+
+<a href="#" class="shutter" id="photo"><span class="icon-camera"></span></a>
+	<div class="strobe">
+		
+	</div>
+
+	<div class="camera">
+		<video  id="video" autoplay style="width:640px;height:480px;"></video>
+		<div style="display:none;">
+		<button id="start">Start</button>
+		<button id="stop">Stop</button>            
+		
+		</div>
+		<canvas id="canvas" style="display:none;" ></canvas>
+	</div>
+
+	<div class="preview">
+
+		<div class="frame">
+			<img src="#" alt="">
+		</div>
+
+		<ul class="dialog">
+			<li class="accept"><span class="icon-plus"></span>これを使う</li>
+			<li class="denine"><span class="icon-cross"></span>撮り直す</li>
+		</ul>
+
+	</div>
+
+</div>
+</section>
+
+<section id="beatninja">
+	<ul class="killedcounter">
+
+	</ul>
+	<div class="ninjawrapper">
+	<ul id="ninja">
+		<li class="top"></li>
+		<li class="bottom"></li>
+	</ul></div>
+</section>
+
+<section id="game"><!--ゲームスタート-->
+
+<div id="game-hud">
+	<div class="meter" id="gauge-self">
+		<div class="inner">
+			<div class="gauge"></div>
+		</div>	
+	</div>
+
+	<div class="meter" id="gauge-enemy">
+		<div class="inner">
+			<div class="gauge"></div>
+		</div>	
+	</div>
+</div>
+
+<div id="enemy">
+	<div id="enemy-body">
+		<div class="hands">
+			<div class="left"></div>
+			<div class="right"></div>
+		</div>
+		<div class="face">
+			<img src="images/placeholder/progress.gif" height="" width="512" alt="">
+			<canvas id="enemyCanvas" class="faceCanvas" width="512" height="512"></canvas>
+		</div>
+
+	</div>
+</div>
+
+<video src="images/bgfight.mp4" id="fireforest" loop="true" autoplay="true"></video>
+
+<script>
+
+	
+var gauge = {
+	self:new UItoolkit.gauge($("#gauge-self")),
+	enemy:new UItoolkit.gauge($("#gauge-enemy")),
+}
+
+var hands = {
+	left:new UItoolkit.body.hand($("#enemy-body .hands .left")),
+	right:new UItoolkit.body.hand($("#enemy-body .hands .right")),
+}
+
+var face = {
+	set:function(base64){
+		$("#metaldoor").addClass("close");
+		setTimeout(function(){$('html,body').scrollTop($("#game").offset().top);},600)
+		var $img=$("#enemy .face img").eq(0).attr({"src":base64});
+		var canvas=$("#enemyCanvas")[0];
+		var c=canvas.getContext("2d");
+		c.drawImage($img[0],0,0,canvas.width,canvas.height);
+		
+	}
+}
+
+
+var stage = {
+	shake:function(){
+		$("#game").removeClass("rumble");
+		setTimeout(function(){$("#game").addClass("rumble")},10)
+	}
+}
+
+
+var game = {
+
+	init:function(){
+		var $game = $("#game");
+
+		gauge.self.set(0);
+		gauge.enemy.set(0);
+		gauge.self.killMotion(true);
+		gauge.enemy.killMotion(true);
+
+		setTimeout(function(){
+			gauge.self.killMotion(false);
+			gauge.enemy.killMotion(false);
+			gauge.self.isSlow(true);
+			gauge.enemy.isSlow(true);
+			gauge.self.set(1);
+			gauge.enemy.set(1);
+
+			setTimeout(function(){
+				gauge.self.isSlow(false);
+				gauge.enemy.isSlow(false);
+			},4000)
+
+		},80)
+
+
+	}
+}
+
+
+// setInterval(function(){stage.shake()},3000)
+
+// var video = $('#fireforest').get(0);
+//         video.load();
+//         video.play();
+
+
+</script>
+
+<script src="scripts/leap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="scripts/audio.js" type="text/javascript" charset="utf-8"></script>
+<script src="scripts/action.js" type="text/javascript" charset="utf-8"></script>
+<script src="scripts/aviary.js" type="text/javascript" charset="utf-8"></script>
+<script src="scripts/camera.js"></script>	
+</section>
+
+<section id="result" onclick="$('#result').find('.itsumonavi').addClass('active')"><!--結果-->
+
+<div id="result-frame">
+	<img id="resultImg" src="images/body.png" alt="" class="resultImg">
+	<canvas width="1920" height="1080" class="resultRendered"></canvas>
+</div>
+
+<a href="#" class="editOnAviary"></a>
+<a href="#" target="_blank" onclick="$('body,html').animate({'scrollTop':$('#satnav').offset().top});return false;" class="itsumonavi"></a>
+
+<ul class="share">
+	<li class="twitter"><a href="#"><span class="icon-twitter"></span>Twitter</a></li>
+	<li class="facebook"><a href="#"><span class="icon-facebook"></span>Facebook</a></li>
+	<li class="mixi"><a href="#"><span class="icon-mixi"></span>mixi</a></li>
+</ul>
+	
+</section>
+
+<section id="satnav">
+	<a href="#" target="_blank" onclick="$('body,html').animate({'scrollTop':$('#result').offset().top});return false;" class="backtoresult" ></a>
+	<div id="map" style="width:100%;height:100%"></div>
+	
+</section>
+
+<img src="images/sky.jpg" height="750" width="1212" alt="" id="skyimage" style="display:none;">
+
+
+
+<style>
+
+</style>
+
+<audio src="audio/bell.ogg" id="audio-bell" preload="auto"></audio>
+<audio src="audio/bell_one.ogg" id="audio-bell-one" preload="auto"></audio>
+<audio src="audio/punch.ogg" id="audio-punch" preload="auto"></audio>
+</body>
+</html>

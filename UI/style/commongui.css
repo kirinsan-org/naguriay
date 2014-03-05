@@ -1,0 +1,494 @@
+
+body,html,section{margin: 0;padding: 0;width: 100%;height: 100%;}
+section{position:relative;overflow:hidden;}
+
+
+#title {background:url(../images/title.jpg) center center;
+background-size:cover;}
+
+#title h1{font-size: 12px;margin-left:10px;}
+#title .start{display: block;
+position: absolute;
+bottom: 110px;
+left: 50%;
+height: 64px;
+width: 64px;
+border: 4px solid #FFF;
+border-radius: 39px;
+line-height: 71px;
+text-align: center;
+text-decoration: none;
+margin: -36px;
+box-shadow: 0 -1px 1px #666;
+background-color: rgba(0,0,0,0.3);
+color: #FFF;
+font-size: 51px;
+-webkit-transition: color 0.2s ease-in-out 0 , background-color 0.2s ease-in-out 0 }
+
+#title .start:hover{background-color:#FFF;color:#000}
+
+#takephoto {
+background:url(../images/bgphotobooth.jpg) center center; 
+background-size:cover;
+}
+	#takephoto h1{position:absolute;}
+	#takephoto #photobooth{top:-100%;position:relative;-webkit-transition:top 0.5s ease-in-out 0s;height:100%;width:100%;}
+	#takephoto.on #photobooth {top:0;}
+
+	#takephoto .shutter {
+	width: 64px;
+	height: 64px;
+	border: 9px solid #FFF;
+	color: #FFF;
+	position: absolute;
+	bottom: 80px;
+	margin: -41px;
+	left: 50%;
+	border-radius: 48px;
+	z-index: 2000;
+	background-color: rgba(0,0,0,0.8);
+	line-height: 68px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 32px;
+	-webkit-transition:opacity 0.5s ease-in-out 0 , bottom 0.5s ease-in-out 0 , color 0.2s ease-in-out 0 , background-color 0.2s ease-in-out 0 }
+	
+	#takephoto.previewing .shutter{bottom:-200px}
+
+	#takephoto .shutter:hover {background-color:#FFF;color:#000}
+	
+	#takephoto.on .shutter {
+	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: 0.3s;
+	}
+
+	@-webkit-keyframes popup {
+	0% {-webkit-transform:scale(2);}
+	20% {-webkit-transform:scale(0.6);}
+	40% {-webkit-transform:scale(1.2);}
+	60% {-webkit-transform:scale(0.8);}
+	80% {-webkit-transform:scale(1.1);}
+	100% {-webkit-transform:scale(1);}
+}
+	
+	#takephoto .camera{padding: 16px;
+	background-color: #FFF;
+	width: 640px;
+	height: 480px;
+	border-radius: 8px;
+	margin: -256px -336px;
+	left: 50%;
+	top: 50%;
+	position: absolute;
+	box-shadow: 0 0 46px #3A5DA8;}
+
+	#takephoto .strobe{width:100%;height:100%;display:none;position:absolute;top:0;left:0;z-index:2000;background-color:#FFF;}
+
+	#takephoto .preview {
+	background:rgba(0,0,0,0.5);
+	width:100%;height:100%;position:absolute;top:0;left:0;
+	display:none;
+	}
+
+		#takephoto .preview .frame{
+		width: 640px;
+		height: 480px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		background-color: #FFF;
+		margin: -256px -336px;
+		padding: 16px;
+		border-radius: 8px;
+		-webkit-transform:scale(0);
+		-webkit-transition:-webkit-transform 0.5s ease-in-out 0;}
+
+		#takephoto .preview.on .frame{-webkit-transform:scale(1);}
+		#takephoto .preview .frame img {width:640px;height:480px;background-color:#CCC;}
+		#takephoto .preview .dialog {position:relative;width:100%;position:absolute;top:50%;left:0;margin:0;padding:0;}
+
+			#takephoto .preview .dialog li {display:block;position:absolute;
+				border:3px solid #FFF;
+			height:32px;
+			width:32px;
+			margin:-16px 0;
+			border-radius:32px;
+			width:120px;
+			line-height:32px;
+			text-align:center;
+			color:#FFF;
+			-webkit-transition:left 0.8s ease-out 0s,right 0.8s ease-out 0s, color 0.2s ease-in-out 0 , background-color 0.2s ease-in-out 0;}
+			#takephoto .preview .dialog li:hover{
+				background:#FFF;
+				color:#000;}
+			#takephoto .preview .dialog li.accept {left:-240px;}
+			#takephoto .preview .dialog li.denine {right:-240px;}
+
+			#takephoto .preview.on .dialog li.accept {left:80px;}
+			#takephoto .preview.on .dialog li.denine {right:80px;}
+
+			#takephoto .preview.on .dialog li span{font-size: 20px;
+			position: relative;
+			top: 3px;
+			margin-right: 3px;}
+
+#game {}
+	#game-hud {position:absolute;
+		top:0;
+		left:0;
+		width:100%;
+		z-index:150;}
+			#game-hud .meter{
+			border: 3px solid #FFF;
+			width: 400px;
+			position: absolute;
+			top: 10px;
+			border-radius: 10px;
+			height: 32px;
+			box-shadow: 0 1px 9px #F00,0 1px 9px #F00,0 1px 59px #F00;
+			background-color: rgba(0,0,0,0.5);}
+
+			#gauge-self {left:10px;}
+			#gauge-enemy {right:10px;}
+
+				.meter .inner {
+				margin:3px;
+				position:relative;
+				}
+					.meter .inner .gauge{
+					-webkit-transition: width 0.2s linear 0;
+					background-color: red;
+					width: 100%;
+					height: 26px;
+					border-radius: 3px;
+					position: absolute;
+					box-shadow: 1px 1px 0 rgba(255,255,255,0.6) inset,-1px -1px 0 rgba(0,0,0,0.5) inset,0px 0px 9px rgba(0,0,0,0.5) inset;
+					opacity: 1;
+					}
+
+					#gauge-self .gauge{left:0;}
+					#gauge-enemy .gauge{right:0;}
+
+					.meter .inner .gauge.killmotion{
+					-webkit-transition: none;}
+
+					.meter .inner .gauge.slow{
+					-webkit-transition: width 4s linear 0!important;}
+
+	#game #enemy{position:relative;z-index:100}
+		#enemy-body {width:512px;margin:0 auto;z-index:100;
+		position:relative;
+			-webkit-animation: idling 3s ease -4s infinite alternate;}
+
+			#enemy-body .face {position:relative;z-index:100;}
+			#enemy-body .face img{}
+			#enemy-body .face canvas{display:none;
+			-webkit-animation: idleY 3s ease -4s infinite alternate;}
+			
+
+			#enemy-body .face.ready {
+				-webkit-animation-name: spin;/*rumbleを呼び出す*/
+				-webkit-animation-timing-function:ease-in-out;
+				-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+			}
+
+
+			@-webkit-keyframes spin {
+				from {-webkit-transform: perspective(1000px) rotateY(-720deg);}
+				to {-webkit-transform: perspective(1000px) rotateY(0deg);}
+			}
+
+			@-webkit-keyframes idleY {
+				from {-webkit-transform: perspective(1000px) rotateX(-10deg);}
+				to {-webkit-transform: perspective(1000px) rotateX(10deg);}
+			}
+			#enemy-body .face.ready img{display:none;}
+			#enemy-body .face.ready canvas{display:block;}
+
+			@-webkit-keyframes idling {0% {top:0;}50% {top:30px;}100% {top:0;}}
+
+			#enemy-body .hands {position:absolute;width:1px;height:1px;top:50%;left:50%;z-index:150;
+			-webkit-animation: idleY 4s ease -4s infinite alternate;}
+			#enemy-body .hands .left,#enemy-body .hands .right{width:320px;height:320px;background-size:cover;background-repeat:no-repeat;position:absolute;
+			-webkit-transition: -webkit-transform 0.08s ease-in-out 0s,right 0.1s ease-in-out 0s,left 0.1s ease-in-out 0s,margin 0.1s ease-in-out 0s;}
+			#enemy-body .hands .left {background-image:url(../images/placeholder/leftHand.png);left:-400px;
+				-webkit-animation: idling 3s ease -3.9s infinite alternate;}
+			        #enemy-body .hands .left.punch,
+			        #enemy-body .hands .right.punch{-webkit-transform: scale(5);}
+			#enemy-body .hands .right {background-image:url(../images/placeholder/rightHand.png);right:-400px;
+				-webkit-animation: idling 3.1s ease -3.9s infinite alternate;}
+
+			#enemy-body .hands .right.guard,
+			#enemy-body .hands .left.guard{margin-top: -100px;}
+
+			#enemy-body .hands .left.guard {left:-300px;}
+			#enemy-body .hands .right.guard {right:-300px;}
+
+			#fireforest {position:absolute;top:0;left:0;width:100%;}
+
+
+	#game.rumble #game-hud{
+		  -webkit-animation-name: rumble;/*rumbleを呼び出す*/
+	    -webkit-animation-timing-function:ease-out;
+	    -webkit-animation-duration: 0.6s;/*2.3秒かけて変化*/
+	    
+	}
+	#game.rumble #enemy{
+		  -webkit-animation-name: rumble;/*rumbleを呼び出す*/
+	    -webkit-animation-timing-function:ease-out;
+	    -webkit-animation-duration: 0.55s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: -0.1s;
+	}
+
+	@-webkit-keyframes rumble {
+	0% {left:340px;-webkit-transform:rotate(10deg);}
+	10% {left:-340px;}
+	20% {left:220px;-webkit-transform:rotate(-8deg);}
+	30% {left:-175px;}
+	40% {left:135px;-webkit-transform:rotate(5deg);}
+	50% {left:-100px;}
+	60% {left:70px;-webkit-transform:rotate(-10deg);}
+	70% {left:-45px;}
+	80% {left:25px;-webkit-transform:rotate(3deg);}
+	90% {left:-10px;}
+	100% {left:-0px;-webkit-transform:rotate(0deg);}}
+
+#metaldoor {width: 100%;height: 100%;position: fixed;top: 0;left: 0;z-index:2000;display: none;}
+#metaldoor.close , #metaldoor.open{display: block;}
+#metaldoor .doorB,
+#metaldoor .doorA{width:50%;height:100%;position:absolute;background-size:cover;}
+#metaldoor .doorA{background-image:url(../images/bgdoor_l.jpg);left:-960px}
+#metaldoor .doorB{background-image:url(../images/bgdoor_r.jpg);right:-960px;}
+
+#metaldoor.close .doorA{	  -webkit-animation-name: doorL;
+	    -webkit-animation-timing-function:ease-in-out;
+	    -webkit-animation-duration: 0.55s;
+	-webkit-animation-delay: -0.1s;left:0;}
+#metaldoor.close .doorB{	  -webkit-animation-name: doorR;
+	    -webkit-animation-timing-function:ease-in-out;
+	    -webkit-animation-duration: 0.55s;
+	-webkit-animation-delay: -0.1s;right:0;}
+
+	#metaldoor.open .doorA{	  -webkit-animation-name: doorLO;
+	    -webkit-animation-timing-function:ease-out;
+	    -webkit-animation-duration: 0.55s;
+	-webkit-animation-delay: -0.1s;left:-960px;}
+#metaldoor.open .doorB{	  -webkit-animation-name: doorRO;
+	    -webkit-animation-timing-function:ease-out;
+	    -webkit-animation-duration: 0.55s;
+	-webkit-animation-delay: -0.1s;right:-960px;}
+
+@-webkit-keyframes doorL {
+	0% {left:-960px;}
+	20% {left:20px;}
+	40% {left:-15px;}
+	60% {left:10px;}
+	80% {left:5px;}
+	100% {left:0px;}
+	}
+
+@-webkit-keyframes doorR {
+	0% {right:-960px;}
+	20% {right:20px;}
+	40% {right:-15px;}
+	60% {right:10px;}
+	80% {right:5px;}
+	100% {right:0px;}
+	}
+
+
+@-webkit-keyframes doorLO {
+	100% {left:-960px;}
+	0% {left:0px;}
+	}
+
+@-webkit-keyframes doorRO {
+	100% {right:-960px;}
+	0% {right:0px;}
+	}
+
+
+#result {background:url(../images/hawaii.jpg) center center no-repeat;background-size:cover;}
+	#result #result-frame {width: 854px;
+height: 480px;
+padding: 16px;
+border-radius: 3px;
+background-color: #FFF;
+box-shadow: 0 8px 24px #333;
+left: 50%;
+top: 150%;
+position: absolute;
+margin: -270px -436px;
+overflow: hidden;
+-webkit-transform: rotate(-5deg);
+	    -webkit-transition:-webkit-transform 1s ease-in-out 0.5s , top 1s ease-in-out 0.5s;}
+
+#result.ready #result-frame {top:50%;-webkit-transform: rotate(1deg);}
+		#result #result-frame img{max-width:100%;background-color:#DDD;width:100%}
+		#result #result-frame canvas{display:none;}
+		#result #result-frame.rendering img{display:none;}
+		#result #result-frame.rendering canvas{display:block;}
+#satnav {}
+
+
+
+
+#beatninja {background-image:url(../images/message.png); background-position:center;background-size:contain;background-repeat:no-repeat;}
+
+	ul#ninja ,ul#ninja li,.ninjawrapper{
+		width:400px;
+		height:600px;
+		display:block;
+		margin:0;
+		padding:0;
+		}
+
+		.killedcounter ,.killedcounter li{list-style-type:none;display:block}
+		.killedcounter {left:0px;top:10px;position:absolute;width:100%;}
+		.killedcounter li{width:56px;height:64px;float:left;background:url(../images/killcount.png)}
+
+
+.ninjawrapper{margin:-300px -200px;position:absolute;top:50%;left:50%}
+
+
+	@-webkit-keyframes moving {
+		  0% {top:0;}
+		 50% {top:30px;}
+		100% {top:0;}
+	}
+
+		ul#ninja {position:relative;
+			-webkit-animation: moving 3s ease -4s infinite alternate;
+		   -moz-animation: moving 3s ease -4s infinite alternate;
+		    -ms-animation: moving 3s ease -4s infinite alternate;
+		     -o-animation: moving 3s ease -4s infinite alternate;
+		        animation: moving 3s ease -4s infinite alternate;}
+
+		ul#ninja.killed {-webkit-transition: -webkit-transform 1s linear 0;
+		   -moz-transition: -moz-transform 1s linear 0;
+		    -ms-transition: -ms-transform 1s linear 0;
+		     -o-transition: -o-transform 1s linear 0;
+		        transition: transform 1s linear 0;}
+		ul#ninja li{position:absolute;top:0;left:0;-webkit-transition: top 1s ease-in-out 0;
+		   -moz-transition: top 1s ease-in-out 0;
+		    -ms-transition: top 1s ease-in-out 0;
+		     -o-transition: top 1s ease-in-out 0;
+		        transition: top 1s ease-in-out 0;}
+
+		ul#ninja li.top{background-image:url(../images/ninja_a.png);}
+		ul#ninja li.bottom{background-image:url(../images/ninja_b.png);}
+		ul#ninja.killed {-webkit-transform: scale(3);
+		   -moz-transform: scale(3);
+		    -ms-transform: scale(3);
+		     -o-transform: scale(3);
+		        transform: scale(3);}
+		ul#ninja.killed li.top{top:-600px}
+		ul#ninja.killed li.bottom{top:600px}
+
+.editOnAviary {background-image: url(../images/moreshiny.png);
+width: 200px;
+height: 100px;
+position: absolute;
+bottom: 16px;
+left: 16px;
+display: block;
+background-color: rgba(0,0,0,0.5);
+border: 5px solid #FFF;
+background-position: center center;
+box-shadow:0 3px 8px #000;
+display:none;
+border-radius: 30px;-webkit-transition: color 0.2s ease-in-out 0 , background-color 0.2s ease-in-out 0 }
+
+.editOnAviary:hover,ul.share li a:hover,.itsumonavi:hover{background-color:#FFF;color:#000}
+
+.backtoresult {background-image: url(../images/backtoresult.png);
+width: 480px;
+height: 80px;
+position: absolute;
+bottom: 16px;
+left: 50%;
+display: block;
+background-color: rgba(0,0,0,0.5);
+border: 5px solid #FFF;
+background-position: center center;
+box-shadow: 0 3px 8px #000;
+border-radius: 30px;
+margin: 0 -240px;z-index:3000;}
+.itsumonavi {background-image: url(../images/itsumo.png);
+width: 480px;
+height: 80px;
+position: absolute;
+bottom: 16px;
+left: 50%;
+display: block;
+background-color: rgba(0,0,0,0.5);
+border: 5px solid #FFF;
+background-position: center center;
+box-shadow: 0 3px 8px #000;
+border-radius: 30px;
+margin: 0 -240px;
+display:none;
+-webkit-transition: color 0.2s ease-in-out 0 , background-color 0.2s ease-in-out 0 }
+		    
+		    .itsumonavi.active{display:block;	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: -0.3s;}
+
+	
+	ul.share ,
+	ul.share li {list-style-type:none;display:block;margin:0;padding:0}
+	ul.share {position:absolute;bottom:20px;right:20px;}
+	ul.share li {padding:5px;}
+	ul.share li a {text-decoration: none;
+color: #FFF;
+padding: 5px 18px;
+background-color: rgba(0,0,0,0.5);
+display: block;
+width: 150px;
+text-align:center;
+font-size: 21px;
+border-radius: 30px;
+border: 5px solid #FFF;
+height: 32px;
+box-shadow:0 3px 8px #000;
+display:none;
+line-height: 32px;-webkit-transition: color 0.2s ease-in-out 0 , background-color 0.2s ease-in-out 0 }
+
+
+.ready .editOnAviary {display:block;
+	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: -0.3s;
+	}
+.ready ul.share li:nth-child(0) a{display:block;
+	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: -0.1s;
+	}
+.ready ul.share li:nth-child(1) a{display:block;
+	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: -0.2s;
+	}
+.ready ul.share li:nth-child(2) a{display:block;
+	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: 0s;
+	}
+.ready ul.share li:nth-child(3) a{display:block;
+	-webkit-animation-name: popup;/*rumbleを呼び出す*/
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-duration: 1s;/*2.3秒かけて変化*/
+	-webkit-animation-delay: -0.4s;
+	}
+
+
+
+	

@@ -1,0 +1,46 @@
+@font-face {
+	font-family: 'systemicon';
+	src:url('fonts/systemicon.eot?cs11fs');
+	src:url('fonts/systemicon.eot?#iefixcs11fs') format('embedded-opentype'),
+		url('fonts/systemicon.woff?cs11fs') format('woff'),
+		url('fonts/systemicon.ttf?cs11fs') format('truetype'),
+		url('fonts/systemicon.svg?cs11fs#systemicon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'systemicon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-play:before {
+	content: "\e600";
+}
+.icon-camera:before {
+	content: "\e601";
+}
+.icon-plus:before {
+	content: "\e602";
+}
+.icon-cross:before {
+	content: "\e603";
+}
+.icon-twitter:before {
+	content: "\e604";
+}
+.icon-facebook:before {
+	content: "\e605";
+}
+.icon-checkmark:before {
+	content: "\e606";
+}
