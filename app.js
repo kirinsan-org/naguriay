@@ -15,18 +15,22 @@ var state = {
     }
 };
 
+var hosts = require('./hosts');
+var player1Host = hosts.player1 || '127.0.0.1';
+var player2Host = hosts.player2 || '127.0.0.1';
+
 // one player must connect to this end point
 app.get('/player1', function(req, res) {
-    req.session.name = 'player1';
-    state.player1.prepared = false;
-    res.redirect('/');
+  req.session.name = 'player1';
+  state.player1.prepared = false;
+  res.redirect('/?host=' + player1Host);
 });
 
 // and another must connect to this
 app.get('/player2', function(req, res) {
-    req.session.name = 'player2';
-    state.player2.prepared = false;
-    res.redirect('/');
+  req.session.name = 'player2';
+  state.player2.prepared = false;
+  res.redirect('/?host=' + player2Host);
 });
 
 // note: This app is considered only 2 players connect each end point.

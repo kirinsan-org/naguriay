@@ -145,7 +145,14 @@ function startGame() {
 	play('audio-bell-one');
 }
 
+var host = '127.0.0.1';
+var matchRes = location.search.match(/host=([a-zA-Z0-9\.]+)/);
+if (matchRes) {
+  host = matchRes[1];
+}
+
 Leap.loop({
+  host : host,
 	enableGestures : true
 }, function(frame) {
 	if (frame.gestures[0] && frame.gestures[0].type === 'swipe' && !$ninja.hasClass('killed')) {
